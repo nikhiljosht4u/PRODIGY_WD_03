@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe</title>
+<style>
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 2px;
+    width: 306px;
+    margin: 0 auto;
+  }
+  .cell {
+    border: 1px solid #000;
+    font-size: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  #spacing {
+    padding: 50px;
+  }
+  #play-again-container {
+    text-align: center;
+    margin-top: 10px;
+  }
+  #play-again {
+  width: 140px;
+  height: 45px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  margin: 10px auto; 
+  display: block;
+}
+
+#play-again:hover {
+  background-color: #2EE59D;
+  box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+  color: #fff;
+  transform: translateY(-7px);
+}
+#tictactoe {
+    padding: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 30px;
+    text-align: center;
+}
+body{
+    background-image: url('bg.jpg');
+}
+</style>
+</head>
+<body>
+    <h1 id="tictactoe">Tic Tac Toe</h1>
+    <div id="spacing"></div>
+<div class="container" id="board"></div>
+<div id="play-again-container">
+  <button id="play-again">Play Again</button>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const board = document.getElementById("board");
+  const cells = [];
+
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    cell.dataset.index = i;
+    cell.addEventListener("click", handleCellClick);
+    cells.push(cell);
+    board.appendChild(cell);
+  }
+
+  let currentPlayer = "X";
+  let gameEnded = false;
+
+  function handleCellClick() {
+    if (gameEnded || this.textContent !== "") return;
+
+    const index = this.dataset.index;
+    this.textContent = currentPlayer;
+    checkWinner(currentPlayer);
+
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+  }
+
+  function checkWinner(player) {
+    const winningCombos = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
+
+    for (let combo of winningCombos) {
+      const [a, b, c] = combo;
+      if (cells[a].textContent === player &&
+          cells[b].textContent === player &&
+          cells[c].textContent === player) {
+        gameEnded = true;
+        cells[a].style.backgroundColor = "lightgreen";
+        cells[b].style.backgroundColor = "lightgreen";
+        cells[c].style.backgroundColor = "lightgreen";
+        alert(`${player} wins!`);
+        showPlayAgainButton();
+        return;
+      }
+    }
+
+    if (![...cells].some(cell => cell.textContent === "")) {
+      gameEnded = true;
+      alert("It's a tie!");
+      showPlayAgainButton();
+    }
+  }
+
+  function showPlayAgainButton() {
+    const playAgainButton = document.getElementById("play-again");
+    playAgainButton.style.display = "block";
+    playAgainButton.addEventListener("click", resetGame);
+  }
+
+  function resetGame() {
+    for (let cell of cells) {
+      cell.textContent = "";
+      cell.style.backgroundColor = "";
+    }
+    currentPlayer = "X";
+    gameEnded = false;
+    document.getElementById("play-again").style.display = "none";
+  }
+});
+</script>
+</body>
+</html>
